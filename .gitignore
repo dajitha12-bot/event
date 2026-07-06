@@ -1,0 +1,16 @@
+# Maven target directory
+target/
+
+# Database files
+*.db
+*.db-journal
+
+# IDE specific files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Logs
+*.log
