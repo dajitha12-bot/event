@@ -9,19 +9,25 @@
     <!-- Custom Style -->
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
-<body class="d-flex align-items-center justify-content-center bg-light">
+<body class="d-flex align-items-center justify-content-center min-vh-100">
 
-<div class="container animate-fade-in">
-    <div class="row justify-content-center">
-        <div class="col-md-5 col-lg-4">
-            <div class="card p-4">
+<div class="container py-5">
+    <div class="row justify-content-center animate-fade-in">
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow p-4" style="background-color: rgba(255,255,255,0.92); backdrop-filter: blur(10px);">
                 <div class="text-center mb-4">
-                    <h2 class="fw-bold" style="color: #5fa8d3;">EventApp</h2>
-                    <p class="text-muted">Create a new account</p>
+                    <!-- Illustrated SVG Logo for Events -->
+                    <div class="d-inline-flex p-3 rounded-circle mb-3" style="background-color: rgba(135, 206, 235, 0.25);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#4a90e2" class="bi bi-calendar-plus-fill" viewBox="0 0 16 16">
+                            <path d="M4 .5a.5.5 0 0 0-1 0V1H2a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-1V.5a.5.5 0 0 0-1 0V1H4zM1 3.993a.25.25 0 0 1 .25-.25h13.5a.25.25 0 0 1 .25.25v10.017a.25.25 0 0 1-.25.25H1.25a.25.25 0 0 1-.25-.25zm7.5 3.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2a.5.5 0 0 1 1 0"/>
+                        </svg>
+                    </div>
+                    <h2 class="fw-bold mb-1" style="color: #1e3d59; letter-spacing: -0.5px;">EventApp</h2>
+                    <p class="text-muted small">Register a new profile to get started</p>
                 </div>
 
                 <!-- Error Alert -->
-                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show border-0 small" role="alert" style="background-color: rgba(244, 67, 54, 0.1); color: #c62828;">
                     <span th:text="${error}">Error message</span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
@@ -33,18 +39,18 @@
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Address</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="name@domain.com" required>
                     </div>
                     <div class="mb-4">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Create password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2 mb-3">Register</button>
+                    <button type="submit" class="btn btn-primary w-100 py-2.5 mb-3">Register</button>
                 </form>
 
                 <div class="text-center mt-2">
-                    <span class="text-muted">Already have an account?</span>
-                    <a th:href="@{/login}" class="text-decoration-none fw-bold ms-1" style="color: #5fa8d3;">Sign in here</a>
+                    <span class="text-muted small">Already have an account?</span>
+                    <a th:href="@{/login}" class="text-decoration-none fw-bold ms-1 small" style="color: #4a90e2;">Sign in here</a>
                 </div>
             </div>
         </div>

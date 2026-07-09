@@ -14,7 +14,12 @@
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg sticky-top">
     <div class="container">
-        <a class="navbar-brand" th:href="@{/dashboard}">EventApp</a>
+        <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/dashboard}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar2-week-fill" viewBox="0 0 16 16">
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zm9.96 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm-9 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+            </svg>
+            <span>EventApp</span>
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,15 +29,17 @@
                     <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/events/create}">Create Event</a>
+                    <a class="nav-link active" th:href="@{/events/create}">Create Event</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/events}">My Events</a>
                 </li>
             </ul>
-            <span class="navbar-text me-3 text-dark fw-medium" th:if="${currentUser != null}" th:text="'Hello, ' + ${currentUser.fullName}"></span>
-            <form th:action="@{/logout}" method="post" id="logoutForm" class="d-none"></form>
-            <button class="btn btn-outline-primary" onclick="document.getElementById('logoutForm').submit();">Logout</button>
+            <div class="d-flex align-items-center gap-3">
+                <span class="navbar-text text-dark fw-medium" th:if="${currentUser != null}" th:text="'Hello, ' + ${currentUser.fullName}"></span>
+                <form th:action="@{/logout}" method="post" id="logoutForm" class="d-none"></form>
+                <button class="btn btn-outline-primary" onclick="document.getElementById('logoutForm').submit();">Logout</button>
+            </div>
         </div>
     </div>
 </nav>
@@ -41,9 +48,15 @@
 <div class="container my-5 animate-fade-in">
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
-            <div class="card p-4">
+            <div class="card border-0 shadow-sm p-4">
                 <div class="mb-4">
-                    <h2 class="fw-bold" style="color: #2b3a4a;">Edit Event</h2>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#4a90e2" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                        </svg>
+                        <h2 class="fw-bold text-dark mb-0" style="color: #1e3d59 !important;">Edit Event</h2>
+                    </div>
                     <p class="text-muted">Modify the details of your event below.</p>
                 </div>
 
@@ -51,32 +64,53 @@
                     <!-- Title -->
                     <div class="mb-3">
                         <label for="title" class="form-label">Event Title</label>
-                        <input type="text" id="title" th:field="*{title}" class="form-control" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''" placeholder="e.g. Annual Tech Symposium" required autofocus>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title Error</div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0" style="border: 1.5px solid rgba(135, 206, 235, 0.4); border-radius: 12px 0 0 12px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#a0aec0" class="bi bi-type" viewBox="0 0 16 16">
+                                    <path d="M2.244 13.081a.5.5 0 0 0 .5.5H3.6a.5.5 0 0 0 .5-.5V11.5c0-.6.4-1 1-1h6.8c.6 0 1 .4 1 1v1.5a.5.5 0 0 0 .5.5h.856a.5.5 0 0 0 .5-.5V1.5a.5.5 0 0 0-.5-.5H13.4a.5.5 0 0 0-.5.5v1.5c0 .6-.4 1-1 1H5.1c-.6 0-1-.4-1-1V1.5a.5.5 0 0 0-.5-.5h-.856a.5.5 0 0 0-.5.5z"/>
+                                </svg>
+                            </span>
+                            <input type="text" id="title" th:field="*{title}" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''" placeholder="e.g. Executive Board Meeting" required autofocus>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title Error</div>
+                        </div>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
-                        <textarea id="description" th:field="*{description}" class="form-control" th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''" rows="4" placeholder="Briefly describe what this event is about..." required></textarea>
+                        <textarea id="description" th:field="*{description}" class="form-control" th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''" rows="4" placeholder="Describe the agenda, speakers, or topics covered..." required></textarea>
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">Description Error</div>
                     </div>
 
                     <!-- Venue -->
                     <div class="mb-3">
-                        <label for="venue" class="form-label">Venue</label>
-                        <input type="text" id="venue" th:field="*{venue}" class="form-control" th:classappend="${#fields.hasErrors('venue')} ? 'is-invalid' : ''" placeholder="e.g. Conference Room B" required>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('venue')}" th:errors="*{venue}">Venue Error</div>
+                        <label for="venue" class="form-label">Venue / Location</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0" style="border: 1.5px solid rgba(135, 206, 235, 0.4); border-radius: 12px 0 0 12px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#a0aec0" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                                </svg>
+                            </span>
+                            <input type="text" id="venue" th:field="*{venue}" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" th:classappend="${#fields.hasErrors('venue')} ? 'is-invalid' : ''" placeholder="e.g. Conference Hall A or Microsoft Teams link" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('venue')}" th:errors="*{venue}">Venue Error</div>
+                        </div>
                     </div>
 
                     <!-- Date -->
                     <div class="mb-4">
-                        <label for="eventDate" class="form-label">Event Date</label>
-                        <input type="date" id="eventDate" th:field="*{eventDate}" class="form-control" th:classappend="${#fields.hasErrors('eventDate')} ? 'is-invalid' : ''" required>
-                        <div class="invalid-feedback" th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}">Date Error</div>
+                        <label for="eventDate" class="form-label">Date of Event</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0" style="border: 1.5px solid rgba(135, 206, 235, 0.4); border-radius: 12px 0 0 12px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#a0aec0" class="bi bi-calendar" viewBox="0 0 16 16">
+                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                                </svg>
+                            </span>
+                            <input type="date" id="eventDate" th:field="*{eventDate}" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" th:classappend="${#fields.hasErrors('eventDate')} ? 'is-invalid' : ''" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}">Date Error</div>
+                        </div>
                     </div>
 
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 mt-4">
                         <button type="submit" class="btn btn-primary px-4 py-2">Save Changes</button>
                         <a th:href="@{/events}" class="btn btn-outline-secondary px-4 py-2 border-0">Cancel</a>
                     </div>

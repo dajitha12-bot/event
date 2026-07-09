@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 4000);
     });
 
-    // Handle delete confirmations dynamically if data attributes are present
+    // Handle delete confirmations dynamically
     const deleteButtons = document.querySelectorAll('.btn-confirm-delete');
     deleteButtons.forEach(button => {
         button.addEventListener('click', (event) => {
@@ -23,4 +23,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Real-time client-side search and filtering for events list
+    const searchInput = document.getElementById('eventSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', () => {
+            const filter = searchInput.value.toLowerCase();
+            const rows = document.querySelectorAll('.event-row');
+            
+            rows.forEach(row => {
+                const titleNode = row.querySelector('.search-title');
+                const venueNode = row.querySelector('.search-venue');
+                
+                const title = titleNode ? titleNode.textContent.toLowerCase() : '';
+                const venue = venueNode ? venueNode.textContent.toLowerCase() : '';
+                
+                if (title.includes(filter) || venue.includes(filter)) {
+                    row.style.setProperty('display', '', 'important');
+                } else {
+                    row.style.setProperty('display', 'none', 'important');
+                }
+            });
+        });
+    }
 });

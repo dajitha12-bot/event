@@ -9,46 +9,52 @@
     <!-- Custom Style -->
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
-<body class="d-flex align-items-center justify-content-center bg-light">
+<body class="d-flex align-items-center justify-content-center min-vh-100">
 
-<div class="container">
+<div class="container py-5">
     <div class="row justify-content-center animate-fade-in">
-        <div class="col-md-5 col-lg-4">
-            <div class="card p-4">
+        <div class="col-md-6 col-lg-4">
+            <div class="card border-0 shadow p-4" style="background-color: rgba(255,255,255,0.92); backdrop-filter: blur(10px);">
                 <div class="text-center mb-4">
-                    <h2 class="fw-bold" style="color: #5fa8d3;">EventApp</h2>
-                    <p class="text-muted">Sign in to manage your events</p>
+                    <!-- Illustrated SVG Logo for Events -->
+                    <div class="d-inline-flex p-3 rounded-circle mb-3" style="background-color: rgba(135, 206, 235, 0.25);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#4a90e2" class="bi bi-calendar2-event-fill" viewBox="0 0 16 16">
+                            <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zm9.96 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm-9 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                        </svg>
+                    </div>
+                    <h2 class="fw-bold mb-1" style="color: #1e3d59; letter-spacing: -0.5px;">EventApp</h2>
+                    <p class="text-muted small">Sign in to coordinate and manage events</p>
                 </div>
 
                 <!-- Status Alerts -->
-                <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                    Invalid email or password.
+                <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show border-0 small" role="alert" style="background-color: rgba(244, 67, 54, 0.1); color: #c62828;">
+                    Invalid email or password. Check credentials.
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div th:if="${param.logout}" class="alert alert-info alert-dismissible fade show" role="alert">
-                    Logged out successfully.
+                <div th:if="${param.logout}" class="alert alert-info alert-dismissible fade show border-0 small" role="alert" style="background-color: rgba(95, 168, 211, 0.15); color: #1565c0;">
+                    You have successfully signed out.
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div th:if="${param.registered}" class="alert alert-success alert-dismissible fade show" role="alert">
-                    Registration successful! Please sign in.
+                <div th:if="${param.registered}" class="alert alert-success alert-dismissible fade show border-0 small" role="alert" style="background-color: rgba(76, 175, 80, 0.15); color: #2e7d32;">
+                    Registered! Sign in to get started.
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
 
                 <form th:action="@{/login}" method="post">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Address</label>
-                        <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required autofocus>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="name@domain.com" required autofocus>
                     </div>
                     <div class="mb-4">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2 mb-3">Sign In</button>
+                    <button type="submit" class="btn btn-primary w-100 py-2.5 mb-3">Sign In</button>
                 </form>
 
                 <div class="text-center mt-2">
-                    <span class="text-muted">Don't have an account?</span>
-                    <a th:href="@{/register}" class="text-decoration-none fw-bold ms-1" style="color: #5fa8d3;">Register here</a>
+                    <span class="text-muted small">Need a workspace?</span>
+                    <a th:href="@{/register}" class="text-decoration-none fw-bold ms-1 small" style="color: #4a90e2;">Create an account</a>
                 </div>
             </div>
         </div>
