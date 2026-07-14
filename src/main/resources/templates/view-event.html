@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - Event Management System</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Style -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg sticky-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-2" th:href="@{/dashboard}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-calendar2-week-fill" viewBox="0 0 16 16">
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zm9.96 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm-9 3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1zm3 0a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+            </svg>
+            <span>EventApp</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/events/create}">Create Event</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/events}">My Events</a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center gap-3">
+                <span class="navbar-text text-dark fw-medium" th:if="${currentUser != null}" th:text="'Hello, ' + ${currentUser.fullName}"></span>
+                <form th:action="@{/logout}" method="post" id="logoutForm" class="d-none"></form>
+                <button class="btn btn-outline-primary" onclick="document.getElementById('logoutForm').submit();">Logout</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container my-5 animate-fade-in">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <!-- Event Card Details -->
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-header bg-primary text-white p-4" style="background: linear-gradient(135deg, #5fa8d3 0%, #4a90e2 100%) !important;">
+                    <div class="d-flex align-items-start justify-content-between gap-3">
+                        <div>
+                            <span class="badge bg-white text-primary mb-2 px-3 py-1.5 fw-semibold" 
+                                  th:text="${event.eventDate.isBefore(T(java.time.LocalDate).now())} ? 'Past Event' : (${event.eventDate.isEqual(T(java.time.LocalDate).now())} ? 'Today' : 'Upcoming Event')">
+                                Upcoming Event
+                            </span>
+                            <h1 class="fw-bold mb-0 text-white" th:text="${event.title}">Event Title</h1>
+                        </div>
+                        <div class="calendar-badge" style="width:60px; height:62px;">
+                            <span class="month" th:text="${#temporals.format(event.eventDate, 'MMM')}">Jul</span>
+                            <span class="day" th:text="${#temporals.format(event.eventDate, 'dd')}">09</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <!-- General Description Section -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold text-dark mb-2">Event Description</h5>
+                        <p class="text-muted fs-6" style="white-space: pre-wrap; line-height: 1.6;" th:text="${event.description}">Event description text here...</p>
+                    </div>
+
+                    <hr class="opacity-10 my-4">
+
+                    <!-- Meta Information Grid -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <h6 class="text-uppercase fw-semibold text-muted mb-3 small tracking-wider">Logistics & Location</h6>
+                            
+                            <!-- Location -->
+                            <div class="d-flex align-items-start gap-2 mb-2.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-geo-alt-fill text-primary mt-0.5" viewBox="0 0 16 16">
+                                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10m0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>
+                                </svg>
+                                <div>
+                                    <small class="text-muted d-block lh-1">Venue</small>
+                                    <span class="fw-medium text-dark" th:text="${event.venue}">Venue name</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Date & Time -->
+                            <div class="d-flex align-items-start gap-2 mb-2.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-clock-fill text-primary mt-0.5" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                </svg>
+                                <div>
+                                    <small class="text-muted d-block lh-1">Date & Time</small>
+                                    <span class="fw-medium text-dark" th:text="${#temporals.format(event.eventDate, 'yyyy-MM-dd')} + ' at ' + ${event.eventTime}">2026-08-10 at 10:00</span>
+                                </div>
+                            </div>
+
+                            <!-- Duration -->
+                            <div class="d-flex align-items-start gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-hourglass-split text-primary mt-0.5" viewBox="0 0 16 16">
+                                    <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5zm3 6.35c-.17-.11-.272-.24-.272-.35v-.7c0-.11.103-.24.272-.35a3.5 3.5 0 0 0 1.228-2.65H6.228a3.5 3.5 0 0 0 1.228 2.65c.17.11.272.24.272.35v.7c0 .11-.103.24-.272.35a3.5 3.5 0 0 0-1.228 2.65h3.544a3.5 3.5 0 0 0-1.228-2.65"/>
+                                </svg>
+                                <div>
+                                    <small class="text-muted d-block lh-1">Duration</small>
+                                    <span class="fw-medium text-dark" th:text="${event.duration} + ' minutes (' + (${event.duration / 60}) + 'h ' + (${event.duration % 60}) + 'm)'">60 minutes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h6 class="text-uppercase fw-semibold text-muted mb-3 small tracking-wider">Organizer Contact</h6>
+                            
+                            <!-- Name -->
+                            <div class="d-flex align-items-start gap-2 mb-2.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-person-badge-fill text-primary mt-0.5" viewBox="0 0 16 16">
+                                    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6m5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1z"/>
+                                </svg>
+                                <div>
+                                    <small class="text-muted d-block lh-1">Name</small>
+                                    <span class="fw-medium text-dark" th:text="${event.organizerName}">Organizer Name</span>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="d-flex align-items-start gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-envelope-fill text-primary mt-0.5" viewBox="0 0 16 16">
+                                    <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zM16 4.697v7.104l-5.803-3.558z"/>
+                                </svg>
+                                <div>
+                                    <small class="text-muted d-block lh-1">Email Address</small>
+                                    <a class="text-decoration-none fw-medium" th:href="'mailto:' + ${event.organizerEmail}" th:text="${event.organizerEmail}" style="color: #4a90e2;">organizer@domain.com</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-5">
+                        <a th:href="@{/events/edit/{id}(id=${event.id})}" class="btn btn-primary px-4 py-2 d-flex align-items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                            </svg>
+                            Edit Event
+                        </a>
+                        <a th:href="@{/events}" class="btn btn-outline-secondary px-4 py-2 border-0">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <p class="mb-0">&copy; 2026 EventApp. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom JS -->
+<script th:src="@{/js/script.js}"></script>
+</body>
+</html>

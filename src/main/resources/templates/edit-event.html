@@ -29,7 +29,7 @@
                     <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" th:href="@{/events/create}">Create Event</a>
+                    <a class="nav-link" th:href="@{/events/create}">Create Event</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/events}">My Events</a>
@@ -96,21 +96,77 @@
                         </div>
                     </div>
 
-                    <!-- Date -->
-                    <div class="mb-4">
-                        <label for="eventDate" class="form-label">Date of Event</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0" style="border: 1.5px solid rgba(135, 206, 235, 0.4); border-radius: 12px 0 0 12px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#a0aec0" class="bi bi-calendar" viewBox="0 0 16 16">
-                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
-                                </svg>
-                            </span>
-                            <input type="date" id="eventDate" th:field="*{eventDate}" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" th:classappend="${#fields.hasErrors('eventDate')} ? 'is-invalid' : ''" required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}">Date Error</div>
+                    <!-- Organizer Details -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="organizerName" class="form-label">Organizer Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="border: 1.5px solid rgba(135, 206, 235, 0.4); border-radius: 12px 0 0 12px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#a0aec0" class="bi bi-person-fill" viewBox="0 0 16 16">
+                                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+                                    </svg>
+                                </span>
+                                <input type="text" id="organizerName" th:field="*{organizerName}" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" th:classappend="${#fields.hasErrors('organizerName')} ? 'is-invalid' : ''" placeholder="e.g. Alice Smith" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('organizerName')}" th:errors="*{organizerName}">Organizer Name Error</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="organizerEmail" class="form-label">Organizer Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="border: 1.5px solid rgba(135, 206, 235, 0.4); border-radius: 12px 0 0 12px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#a0aec0" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                                        <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414zM0 4.697v7.104l5.803-3.558zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586zM16 4.697v7.104l-5.803-3.558z"/>
+                                    </svg>
+                                </span>
+                                <input type="email" id="organizerEmail" th:field="*{organizerEmail}" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" th:classappend="${#fields.hasErrors('organizerEmail')} ? 'is-invalid' : ''" placeholder="organizer@domain.com" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('organizerEmail')}" th:errors="*{organizerEmail}">Email Error</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="d-flex gap-2 mt-4">
+                    <!-- Date & Time -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="eventDate" class="form-label">Date of Event</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="border: 1.5px solid rgba(135, 206, 235, 0.4); border-radius: 12px 0 0 12px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#a0aec0" class="bi bi-calendar" viewBox="0 0 16 16">
+                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/>
+                                    </svg>
+                                </span>
+                                <input type="date" id="eventDate" th:field="*{eventDate}" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" th:classappend="${#fields.hasErrors('eventDate')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}">Date Error</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="eventTime" class="form-label">Venue Time</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0" style="border: 1.5px solid rgba(135, 206, 235, 0.4); border-radius: 12px 0 0 12px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#a0aec0" class="bi bi-clock-fill" viewBox="0 0 16 16">
+                                        <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+                                    </svg>
+                                </span>
+                                <input type="time" id="eventTime" th:field="*{eventTime}" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" th:classappend="${#fields.hasErrors('eventTime')} ? 'is-invalid' : ''" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('eventTime')}" th:errors="*{eventTime}">Time Error</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Duration -->
+                    <div class="mb-4">
+                        <label for="duration" class="form-label">Duration (in minutes)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0" style="border: 1.5px solid rgba(135, 206, 235, 0.4); border-radius: 12px 0 0 12px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#a0aec0" class="bi bi-hourglass-split" viewBox="0 0 16 16">
+                                    <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5zm3 6.35c-.17-.11-.272-.24-.272-.35v-.7c0-.11.103-.24.272-.35a3.5 3.5 0 0 0 1.228-2.65H6.228a3.5 3.5 0 0 0 1.228 2.65c.17.11.272.24.272.35v.7c0 .11-.103.24-.272.35a3.5 3.5 0 0 0-1.228 2.65h3.544a3.5 3.5 0 0 0-1.228-2.65"/>
+                                </svg>
+                            </span>
+                            <input type="number" id="duration" th:field="*{duration}" class="form-control border-start-0" style="border-radius: 0 12px 12px 0;" th:classappend="${#fields.hasErrors('duration')} ? 'is-invalid' : ''" placeholder="e.g. 60" min="1" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('duration')}" th:errors="*{duration}">Duration Error</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary px-4 py-2">Save Changes</button>
                         <a th:href="@{/events}" class="btn btn-outline-secondary px-4 py-2 border-0">Cancel</a>
                     </div>
