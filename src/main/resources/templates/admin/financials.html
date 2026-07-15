@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Financial Summary — EMS Admin</title>
+<link rel="stylesheet" href="/css/main.css"/>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🛡️</div><h2>EMS Admin</h2><p>System Administrator</p></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Administration</div>
+        <a href="/admin/dashboard" class="nav-link"><span class="icon">🏠</span> Dashboard</a>
+        <a href="/admin/events/pending" class="nav-link"><span class="icon">⏳</span> Pending Approvals</a>
+        <a href="/admin/events" class="nav-link"><span class="icon">📅</span> All Events</a>
+        <a href="/admin/registrations" class="nav-link"><span class="icon">📋</span> Registrations</a>
+        <a href="/admin/financials" class="nav-link active"><span class="icon">💰</span> Financials</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer"><a href="/logout" class="nav-link" style="color:var(--red)"><span class="icon">🚪</span> Logout</a></div>
+  </aside>
+  <main class="main-content">
+    <div class="topbar">
+      <div class="page-title">Financial <span>Summary</span></div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-card" style="grid-column:span 2;">
+        <div class="stat-icon green">💰</div>
+        <div class="stat-value" style="font-size:2.2rem;">₹<span th:text="${#numbers.formatDecimal(stats.totalRevenue,1,0)}">0</span></div>
+        <div class="stat-label">Total Revenue Collected</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">📋</div>
+        <div class="stat-value" th:text="${stats.totalRegistrations}">0</div>
+        <div class="stat-label">Total Paid Registrations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">📅</div>
+        <div class="stat-value" th:text="${stats.approvedEvents}">0</div>
+        <div class="stat-label">Revenue-Generating Events</div>
+      </div>
+    </div>
+
+    <!-- Revenue per Event -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">💰 Revenue by Event</span></div>
+      <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Event Name</th><th>Faculty</th><th>Status</th><th>Fee/Head</th><th>Registrations</th><th>Revenue</th><th>Capacity Used</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="event : ${events}">
+                <td class="fw-bold" th:text="${event.name}">Event</td>
+                <td class="text-muted">Dr. <span th:text="${event.faculty.name}">Faculty</span></td>
+                <td>
+                  <span th:switch="${event.status}">
+                    <span th:case="'APPROVED'" class="badge badge-approved">Approved</span>
+                    <span th:case="'PENDING'" class="badge badge-pending">Pending</span>
+                    <span th:case="'REJECTED'" class="badge badge-rejected">Rejected</span>
+                  </span>
+                </td>
+                <td>
+                  <span th:if="${event.registrationFee == 0}" class="text-green fw-bold">FREE</span>
+                  <span th:unless="${event.registrationFee == 0}">₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span></span>
+                </td>
+                <td th:text="${event.bookedSeats}">0</td>
+                <td class="text-green fw-bold">₹<span th:text="${#numbers.formatDecimal(event.totalRevenue,1,0)}">0</span></td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="seat-bar" style="width:80px;margin:0;">
+                      <div class="seat-bar-fill"
+                           th:style="'width:' + ${event.totalSeats > 0 ? event.bookedSeats * 100 / event.totalSeats : 0} + '%'"></div>
+                    </div>
+                    <span class="text-muted" style="font-size:.75rem;">
+                      <span th:text="${event.totalSeats > 0 ? event.bookedSeats * 100 / event.totalSeats : 0}">0</span>%
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

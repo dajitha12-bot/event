@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Earnings Report — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside th:replace="~{fragments/sidebar :: facultySidebar('earnings')}"></aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Earnings <span>Report</span></div>
+        <div class="text-muted" style="font-size:.82rem; margin-top:2px;">Track revenue, bookings, and customer feedback performance statistics</div>
+      </div>
+      <div class="topbar-user">
+        <div class="avatar" th:text="${#strings.substring(facultyName,0,1)}">F</div>
+        <span>Dr. <span th:text="${facultyName}">Faculty</span></span>
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon green">💰</div>
+        <div class="stat-value">₹<span th:text="${#numbers.formatDecimal(stats.totalRevenue,1,0)}">0</span></div>
+        <div class="stat-label">Total Revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">📅</div>
+        <div class="stat-value" th:text="${stats.totalEvents}">0</div>
+        <div class="stat-label">Total Events</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">👥</div>
+        <div class="stat-value" th:text="${stats.totalRegistrations}">0</div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">⭐</div>
+        <div class="stat-value" th:text="${stats.avgRating}">N/A</div>
+        <div class="stat-label">Avg Rating</div>
+      </div>
+    </div>
+
+    <!-- Event Breakdown -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">📊 Event-wise Earnings Breakdown</span></div>
+      <div class="card-body">
+        <div th:if="${myEvents.empty}" class="empty-state">
+          <div class="e-icon">📭</div><p>No events created yet.</p>
+        </div>
+        <div class="table-wrap" th:unless="${myEvents.empty}">
+          <table>
+            <thead>
+              <tr><th>Event</th><th>Venue</th><th>Status</th><th>Fee/Head</th><th>Registrations</th><th>Revenue</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="event : ${myEvents}">
+                <td class="fw-bold" th:text="${event.name}">Event</td>
+                <td class="text-muted" th:text="${event.venue}">Venue</td>
+                <td>
+                  <span th:switch="${event.status}">
+                    <span th:case="'APPROVED'" class="badge badge-approved">Approved</span>
+                    <span th:case="'PENDING'" class="badge badge-pending">Pending</span>
+                    <span th:case="'REJECTED'" class="badge badge-rejected">Rejected</span>
+                  </span>
+                </td>
+                <td>
+                  <span th:if="${event.registrationFee == 0}" class="text-green fw-bold" style="color: var(--success);">FREE</span>
+                  <span th:unless="${event.registrationFee == 0}">₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span></span>
+                </td>
+                <td th:text="${event.bookedSeats}">0</td>
+                <td class="fw-bold text-green" style="color: var(--success);">₹<span th:text="${#numbers.formatDecimal(event.totalRevenue,1,0)}">0</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

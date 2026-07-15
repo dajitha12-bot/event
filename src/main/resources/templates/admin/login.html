@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Login — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+</head>
+<body>
+<div class="auth-body">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">🛡️</div>
+      <h1>Admin Portal</h1>
+      <p>System administration access</p>
+    </div>
+    <div th:if="${error}" class="alert alert-error">⚠️ <span th:text="${error}"></span></div>
+    <form method="post" action="/admin/login">
+      <div class="form-group">
+        <label class="form-label">Admin Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Enter admin password" required/>
+        <small class="text-muted" style="font-size:.72rem;margin-top:4px;display:block;">Demo password: admin123</small>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:6px;">Access Admin Panel →</button>
+    </form>
+    <div class="auth-footer" style="margin-top:16px;"><a href="/" style="color:var(--muted);">← Back to Home</a></div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>All Registrations — EMS Admin</title>
+<link rel="stylesheet" href="/css/main.css"/>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🛡️</div><h2>EMS Admin</h2><p>System Administrator</p></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Administration</div>
+        <a href="/admin/dashboard" class="nav-link"><span class="icon">🏠</span> Dashboard</a>
+        <a href="/admin/events/pending" class="nav-link"><span class="icon">⏳</span> Pending Approvals</a>
+        <a href="/admin/events" class="nav-link"><span class="icon">📅</span> All Events</a>
+        <a href="/admin/registrations" class="nav-link active"><span class="icon">📋</span> Registrations</a>
+        <a href="/admin/financials" class="nav-link"><span class="icon">💰</span> Financials</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer"><a href="/logout" class="nav-link" style="color:var(--red)"><span class="icon">🚪</span> Logout</a></div>
+  </aside>
+  <main class="main-content">
+    <div class="topbar">
+      <div class="page-title">All <span>Registrations</span></div>
+    </div>
+
+    <div th:if="${events.empty}" class="empty-state" style="padding:80px 20px;">
+      <div class="e-icon">📋</div><p>No registrations yet.</p>
+    </div>
+
+    <div th:each="event : ${events}" th:unless="${event.registrations.empty}" class="card" style="margin-bottom:20px;">
+      <div class="card-header">
+        <div>
+          <span class="card-title" th:text="${event.name}">Event</span>
+          <span class="text-muted" style="font-size:.78rem;margin-left:10px;" th:text="${event.venue} + ' · ' + ${event.time}">Venue</span>
+        </div>
+        <span class="badge badge-approved" th:text="${event.registrations.size()} + ' registered'">0</span>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Reg ID</th><th>Student</th><th>Department</th><th>Amount</th><th>Method</th><th>Date</th><th>Feedback</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="reg : ${event.registrations}">
+                <td><span class="mono" th:text="${reg.registrationId}">REG001</span></td>
+                <td class="fw-bold" th:text="${reg.student.name}">Student</td>
+                <td class="text-muted" th:text="${reg.student.department}">Dept</td>
+                <td class="text-accent fw-bold">
+                  <span th:if="${reg.amountPaid == 0}" class="text-green">FREE</span>
+                  <span th:unless="${reg.amountPaid == 0}">₹<span th:text="${#numbers.formatDecimal(reg.amountPaid,1,0)}">0</span></span>
+                </td>
+                <td th:text="${reg.paymentMethod}">UPI</td>
+                <td class="text-muted" style="font-size:.78rem;" th:text="${#temporals.format(reg.registrationDate,'dd MMM yyyy HH:mm')}">Date</td>
+                <td>
+                  <span th:if="${reg.feedback != null}">
+                    <span class="stars" th:text="${'★'.repeat(reg.rating)}">★★★</span>
+                    <div style="font-size:.72rem;color:var(--muted);" th:text="${#strings.abbreviate(reg.feedback, 40)}">Comment</div>
+                  </span>
+                  <span th:unless="${reg.feedback != null}" class="badge badge-pending">Pending</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

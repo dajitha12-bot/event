@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Event Students — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside th:replace="~{fragments/sidebar :: facultySidebar('events')}"></aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Registered <span>Students</span></div>
+        <div class="text-muted" style="font-size:.82rem; margin-top:2px;" th:text="${event.name}">Event</div>
+      </div>
+      <div class="topbar-actions">
+        <a href="/faculty/events" class="btn btn-outline btn-sm">← Back to My Events</a>
+      </div>
+    </div>
+
+    <!-- Event summary cards -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue">💺</div>
+        <div class="stat-value" th:text="${event.totalSeats}">100</div>
+        <div class="stat-label">Total Seats</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-value" th:text="${registrations.size()}">0</div>
+        <div class="stat-label">Registered</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">💺</div>
+        <div class="stat-value" th:text="${event.availableSeats}">100</div>
+        <div class="stat-label">Available Seats</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">💰</div>
+        <div class="stat-value">₹<span th:text="${#numbers.formatDecimal(event.totalRevenue,1,0)}">0</span></div>
+        <div class="stat-label">Revenue</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">👥 Student Roll List</span>
+        <span class="badge badge-approved" th:text="${registrations.size()} + ' registered'">0 registered</span>
+      </div>
+      <div class="card-body">
+        <div th:if="${registrations.empty}" class="empty-state">
+          <div class="e-icon">👥</div>
+          <p>No students registered yet.</p>
+        </div>
+        <div class="table-wrap" th:unless="${registrations.empty}">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Student</th><th>Department</th><th>Reg ID</th><th>Amount</th><th>Method</th><th>Date</th><th>Feedback</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="reg, iStat : ${registrations}">
+                <td class="text-muted" th:text="${iStat.count}">1</td>
+                <td class="fw-bold" th:text="${reg.student.name}">Student</td>
+                <td class="text-muted" th:text="${reg.student.department}">Dept</td>
+                <td><span style="font-family:'Courier New', monospace; font-weight: 600;" th:text="${reg.registrationId}">REG001</span></td>
+                <td class="fw-bold text-accent">
+                  <span th:if="${reg.amountPaid == 0}" class="text-green" style="color: var(--success);">FREE</span>
+                  <span th:unless="${reg.amountPaid == 0}">₹<span th:text="${#numbers.formatDecimal(reg.amountPaid,1,0)}">0</span></span>
+                </td>
+                <td th:text="${reg.paymentMethod}">UPI</td>
+                <td class="text-muted" style="font-size:.78rem;" th:text="${#temporals.format(reg.registrationDate,'dd MMM yyyy HH:mm')}">Date</td>
+                <td>
+                  <span th:if="${reg.feedback != null}">
+                    <span style="color: #f59e0b;" th:text="${'★'.repeat(reg.rating)}">★★★★★</span>
+                    <div style="font-size:.75rem; color:var(--text-secondary); max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" th:text="${reg.feedback}">Comment</div>
+                  </span>
+                  <span th:unless="${reg.feedback != null}" class="text-muted" style="font-size:.78rem;">Pending</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

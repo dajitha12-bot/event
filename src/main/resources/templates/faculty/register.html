@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Organizer Register — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="auth-wrapper">
+  <div class="auth-card" style="max-width: 480px;">
+    <div class="auth-header">
+      <div class="p-icon" style="font-size: 2.5rem; text-align: center; margin-bottom: 12px;">💼</div>
+      <h1>Organizer Sign Up</h1>
+      <p>Only email addresses ending with @organizer.com are permitted</p>
+    </div>
+    <div th:if="${error}" class="alert alert-error">⚠️ <span th:text="${error}"></span></div>
+    
+    <form method="post" action="/faculty/register">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" name="name" class="form-control" placeholder="Dr. Sharma" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-control" placeholder="username@organizer.com" pattern=".*@organizer\.com$" title="Organizer email must end with @organizer.com" required/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Department</label>
+        <select name="department" class="form-control" required>
+          <option value="">Select Department</option>
+          <option>Computer Science</option>
+          <option>Electronics</option>
+          <option>Mechanical</option>
+          <option>Civil Engineering</option>
+          <option>Information Technology</option>
+          <option>Mathematics</option>
+          <option>Physics</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="••••••••" required/>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;">Sign Up</button>
+    </form>
+    <div class="auth-footer">Already have an organizer account? <a href="/faculty/login">Sign In</a></div>
+    <div class="auth-footer" style="margin-top:12px;"><a href="/" style="color:var(--text-secondary);">← Back to Portal Catalog</a></div>
+  </div>
+</div>
+</body>
+</html>

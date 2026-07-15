@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Registered Events — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside th:replace="~{fragments/sidebar :: studentSidebar('registrations')}"></aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Registered <span>Events</span></div>
+        <div class="text-muted" style="font-size:.82rem; margin-top:2px;">Track your registrations and submit event feedback</div>
+      </div>
+      <div class="topbar-user">
+        <div class="avatar" th:text="${#strings.substring(studentName,0,1)}">S</div>
+        <span th:text="${studentName}">Student</span>
+      </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">✓ <span th:text="${success}"></span></div>
+    <div th:if="${error}" class="alert alert-error">⚠️ <span th:text="${error}"></span></div>
+
+    <div th:if="${registrations.empty}" class="empty-state" style="padding:80px 20px;">
+      <div class="e-icon">📝</div>
+      <p>You haven't registered for any events yet.</p>
+      <a href="/student/events" class="btn btn-primary" style="margin-top:16px;">Browse Events</a>
+    </div>
+
+    <div th:unless="${registrations.empty}">
+      <div th:each="reg : ${registrations}" class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title" th:text="${reg.event.name}">Event Name</div>
+            <div class="text-muted" style="font-size:.78rem; margin-top:4px;">
+              Registration ID: <span style="font-family:'Courier New', monospace; font-weight: 600;" th:text="${reg.registrationId}">REG001</span>
+            </div>
+          </div>
+          <span th:if="${reg.feedback != null}" class="badge badge-approved">Feedback Given ⭐<span th:text="${reg.rating}">5</span></span>
+          <span th:unless="${reg.feedback != null}" class="badge badge-pending">Feedback Pending</span>
+        </div>
+        <div class="card-body">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; margin-bottom:20px;">
+            <div>
+              <div class="form-label" style="font-size:.68rem;">Venue</div>
+              <div class="fw-bold" th:text="${reg.event.venue}">Venue</div>
+            </div>
+            <div>
+              <div class="form-label" style="font-size:.68rem;">Time</div>
+              <div class="fw-bold" th:text="${reg.event.time}">Time</div>
+            </div>
+            <div>
+              <div class="form-label" style="font-size:.68rem;">Amount Paid</div>
+              <div class="fw-bold text-accent" style="color: var(--accent);">
+                <span th:if="${reg.amountPaid == 0}" class="text-green" style="color: var(--success);">FREE</span>
+                <span th:unless="${reg.amountPaid == 0}">₹<span th:text="${#numbers.formatDecimal(reg.amountPaid,1,0)}">0</span></span>
+              </div>
+            </div>
+            <div>
+              <div class="form-label" style="font-size:.68rem;">Payment Method</div>
+              <div class="fw-bold" th:text="${reg.paymentMethod}">UPI</div>
+            </div>
+          </div>
+          
+          <div th:if="${reg.feedback != null}" style="background:rgba(16,185,129,.05); border:1px solid rgba(16,185,129,.15); border-radius:8px; padding:16px;">
+            <div class="form-label" style="font-size:.68rem; margin-bottom:6px; color: var(--success);">Your Feedback</div>
+            <div style="font-size:1.15rem; color: #f59e0b; letter-spacing: 2px;" th:text="${'★'.repeat(reg.rating) + '☆'.repeat(5-reg.rating)}">★★★★★</div>
+            <div style="font-size:.85rem; margin-top:8px; color: var(--text-primary);" th:text="${reg.feedback}">Comments</div>
+          </div>
+          
+          <div th:unless="${reg.feedback != null}" style="margin-top:4px;">
+            <button class="btn btn-outline btn-sm" onclick="openFeedback(this)"
+                    th:attr="data-event-id=${reg.event.id},data-event-name=${reg.event.name}">
+              ✍️ Submit Feedback
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedbackModal" class="modal-backdrop">
+  <div class="modal-content">
+    <h3 style="margin-bottom:12px; font-family:'Sora',sans-serif;">✍️ Submit Feedback</h3>
+    <p id="feedbackEventName" style="color:var(--text-secondary); font-size:.85rem; margin-bottom:20px;"></p>
+    <form method="post" action="/student/feedback">
+      <input type="hidden" name="eventId" id="feedbackEventId"/>
+      <div class="form-group">
+        <label class="form-label">Rating</label>
+        <div style="display:flex; gap:8px;" id="starRow" class="star-rating">
+          <input type="hidden" name="rating" id="ratingInput" value="5"/>
+          <span data-val="1">⭐</span><span data-val="2">⭐</span>
+          <span data-val="3">⭐</span><span data-val="4">⭐</span><span data-val="5">⭐</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Comments</label>
+        <textarea name="comments" class="form-control" rows="4" placeholder="Share your experience..." required style="resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:16px;">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" class="btn btn-outline" onclick="closeFeedback()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let selectedRating = 5;
+function openFeedback(btn) {
+  document.getElementById('feedbackEventId').value = btn.dataset.eventId;
+  document.getElementById('feedbackEventName').textContent = 'Event: ' + btn.dataset.eventName;
+  document.getElementById('feedbackModal').style.display = 'flex';
+  updateStars(5);
+}
+function closeFeedback() {
+  document.getElementById('feedbackModal').style.display = 'none';
+}
+function setRating(val) {
+  selectedRating = val;
+  updateStars(val);
+}
+function updateStars(n) {
+  document.getElementById('ratingInput').value = n;
+  const stars = document.querySelectorAll('#starRow span');
+  stars.forEach((s, i) => {
+    s.style.opacity = i < n ? '1' : '0.25';
+  });
+}
+document.querySelectorAll('#starRow span').forEach((s, i) => {
+  s.addEventListener('click', () => setRating(i + 1));
+});
+updateStars(5);
+</script>
+</body>
+</html>

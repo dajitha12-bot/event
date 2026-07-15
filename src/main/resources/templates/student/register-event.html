@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Register for Event — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside th:replace="~{fragments/sidebar :: studentSidebar('events')}"></aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Event <span>Registration</span></div>
+        <div class="text-muted" style="font-size:.82rem; margin-top:2px;">Complete details and select payment method to register</div>
+      </div>
+      <div class="topbar-actions">
+        <a href="/student/events" class="btn btn-outline btn-sm">← Back to Events</a>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap:24px; max-width:960px;">
+      <!-- Event Details -->
+      <div class="card">
+        <div class="card-header"><span class="card-title">📅 Event Information</span></div>
+        <div class="card-body">
+          <h2 style="font-family:'Sora',sans-serif; font-size:1.3rem; font-weight:700; margin-bottom:20px; color: var(--text-primary);" th:text="${event.name}">Event</h2>
+          <div style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; gap:12px; align-items:center;">
+              <span style="font-size:1.25rem;">📍</span>
+              <div>
+                <div class="form-label" style="font-size:.65rem; margin-bottom:2px;">Venue</div>
+                <div th:text="${event.venue}" class="fw-bold">Venue</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+              <span style="font-size:1.25rem;">🕐</span>
+              <div>
+                <div class="form-label" style="font-size:.65rem; margin-bottom:2px;">Time</div>
+                <div th:text="${event.time}" class="fw-bold">Time</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+              <span style="font-size:1.25rem;">💺</span>
+              <div>
+                <div class="form-label" style="font-size:.65rem; margin-bottom:2px;">Seats Available</div>
+                <div class="fw-bold">
+                  <span th:text="${event.availableSeats}">50</span> /
+                  <span th:text="${event.totalSeats}">100</span>
+                </div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+              <span style="font-size:1.25rem;">👤</span>
+              <div>
+                <div class="form-label" style="font-size:.65rem; margin-bottom:2px;">Coordinator</div>
+                <div class="fw-bold">Dr. <span th:text="${event.faculty.name}">Faculty</span></div>
+              </div>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+              <span style="font-size:1.25rem;">💰</span>
+              <div>
+                <div class="form-label" style="font-size:.65rem; margin-bottom:2px;">Registration Fee</div>
+                <div class="fw-bold text-accent" style="font-size:1.3rem; color: var(--accent);">
+                  <span th:if="${event.registrationFee == 0}" class="text-green" style="color: var(--success);">FREE</span>
+                  <span th:unless="${event.registrationFee == 0}">
+                    ₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div th:if="${event.description}" style="margin-top:8px; padding:16px; background:rgba(0,0,0,0.15); border-radius:var(--radius); border: 1px solid var(--border-color);">
+              <div class="form-label" style="font-size:.65rem; margin-bottom:4px;">Description</div>
+              <div style="font-size:.85rem; color: var(--text-secondary);" th:text="${event.description}"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div class="card">
+        <div class="card-header"><span class="card-title">💳 Confirm Registration</span></div>
+        <div class="card-body">
+          <form th:action="@{/student/events/{id}/register(id=${event.id})}" method="post">
+            <div class="form-group">
+              <label class="form-label" style="margin-bottom: 10px;">Select Payment Option</label>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <label th:each="method : ${paymentMethods}"
+                       style="display:flex; align-items:center; gap:12px; padding:14px; background:rgba(0,0,0,0.15); border:1px solid var(--border-color); border-radius:var(--radius); cursor:pointer; transition: var(--transition);">
+                  <input type="radio" name="paymentMethod" th:value="${method}" required style="accent-color:var(--accent); width:18px; height:18px;">
+                  <span th:text="${method}" style="font-size:.88rem; font-weight:600; color: var(--text-primary);"></span>
+                </label>
+              </div>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.15); border:1px solid var(--border-color); border-radius:var(--radius); padding:20px; margin-bottom:24px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:.85rem;">
+                <span class="text-secondary" style="color: var(--text-secondary);">Registration Fee</span>
+                <span>
+                  <span th:if="${event.registrationFee == 0}" class="text-green fw-bold" style="color: var(--success);">FREE</span>
+                  <span th:unless="${event.registrationFee == 0}" class="fw-bold">
+                    ₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span>
+                  </span>
+                </span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:1.05rem; font-weight:700; border-top:1px solid var(--border-color); padding-top:12px; margin-top:4px;">
+                <span>Total Due</span>
+                <span class="text-accent" style="color: var(--accent);">
+                  <span th:if="${event.registrationFee == 0}" class="text-green" style="color: var(--success);">FREE</span>
+                  <span th:unless="${event.registrationFee == 0}">
+                    ₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span>
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:12px;">
+              Confirm & Book Seat
+            </button>
+            <p style="font-size:.75rem; color:var(--text-secondary); text-align:center; margin-top:12px; line-height:1.4;">
+              Upon successful validation, a booking receipt with transaction details will be generated.
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Upcoming Events — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside th:replace="~{fragments/sidebar :: studentSidebar('events')}"></aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Upcoming <span>Events</span></div>
+        <div class="text-muted" style="font-size:.82rem; margin-top:2px;">Browse approved events and secure your seats</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="topbar-user">
+          <div class="avatar" th:text="${#strings.substring(studentName,0,1)}">S</div>
+          <span th:text="${studentName}">Student</span>
+        </div>
+      </div>
+    </div>
+
+    <div th:if="${error}" class="alert alert-error">⚠️ <span th:text="${error}"></span></div>
+
+    <div th:if="${events.empty}" class="empty-state">
+      <div class="e-icon">📭</div>
+      <p>No events are currently scheduled. Please check back later!</p>
+    </div>
+
+    <div class="events-grid" th:unless="${events.empty}">
+      <div th:each="event : ${events}" class="event-card">
+        <div class="event-card-header">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px;">
+            <span class="badge badge-approved">✓ Open</span>
+            <span th:if="${event.registrationFee == 0}" class="badge badge-free">FREE</span>
+          </div>
+          <h3 th:text="${event.name}">Event Name</h3>
+          <p th:if="${event.description}" class="text-muted" style="font-size:0.8rem; margin-top:8px; line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;"
+             th:text="${event.description}"></p>
+        </div>
+        <div class="event-card-body" style="margin-top:16px;">
+          <div class="event-meta">
+            <div class="event-meta-item"><span class="mi">📍</span><span th:text="${event.venue}">Venue</span></div>
+            <div class="event-meta-item"><span class="mi">🕐</span><span th:text="${event.time}">Time</span></div>
+            <div class="event-meta-item"><span class="mi">💺</span>
+              <span th:text="${event.availableSeats} + ' / ' + ${event.totalSeats} + ' seats available'"></span>
+            </div>
+            <div class="event-meta-item"><span class="mi">👤</span>
+              <span th:text="'Organizer: Dr. ' + ${event.faculty.name}">Faculty</span>
+            </div>
+          </div>
+          <div class="seat-bar">
+            <div class="seat-bar-fill" th:style="'width:' + ${event.availableSeats * 100 / event.totalSeats} + '%'"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px;">
+            <div>
+              <span th:if="${event.registrationFee == 0}" class="event-fee event-fee-free">FREE</span>
+              <span th:unless="${event.registrationFee == 0}" class="event-fee">
+                ₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span>
+              </span>
+            </div>
+            <a th:href="@{/student/events/{id}/register(id=${event.id})}" class="btn btn-primary btn-sm">
+              Register Now
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

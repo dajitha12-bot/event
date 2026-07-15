@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Dashboard — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside th:replace="~{fragments/sidebar :: studentSidebar('dashboard')}"></aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Welcome back, <span th:text="${studentName}">Student</span> 👋</div>
+        <div class="text-muted" style="font-size:.82rem; margin-top:2px;">Here's an overview of campus events for you</div>
+      </div>
+      <div class="topbar-user">
+        <div class="avatar" th:text="${#strings.substring(studentName,0,1)}">S</div>
+        <span th:text="${studentName}">Student</span>
+      </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">✓ <span th:text="${success}"></span></div>
+    <div th:if="${error}" class="alert alert-error">⚠️ <span th:text="${error}"></span></div>
+
+    <!-- Stats -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue">📅</div>
+        <div class="stat-value" th:text="${availableEvents.size()}">0</div>
+        <div class="stat-label">Available Events</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-value" th:text="${myRegistrations.size()}">0</div>
+        <div class="stat-label">My Registrations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">⭐</div>
+        <div class="stat-value" th:text="${#lists.size(myRegistrations.?[feedback != null])}">0</div>
+        <div class="stat-label">Feedback Given</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red">⏳</div>
+        <div class="stat-value" th:text="${#lists.size(myRegistrations.?[feedback == null])}">0</div>
+        <div class="stat-label">Pending Feedback</div>
+      </div>
+    </div>
+
+    <!-- Available Events preview -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📅 Recommended Events</span>
+        <a href="/student/events" class="btn btn-outline btn-sm">View All</a>
+      </div>
+      <div class="card-body">
+        <div th:if="${availableEvents.empty}" class="empty-state">
+          <div class="e-icon">📭</div>
+          <p>No events available right now. Check back soon!</p>
+        </div>
+        <div class="events-grid" th:unless="${availableEvents.empty}">
+          <div th:each="event, iStat : ${availableEvents}" th:if="${iStat.index < 3}" class="event-card">
+            <div class="event-card-header">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+                <span class="badge badge-approved">✓ Open</span>
+                <span th:if="${event.registrationFee == 0}" class="badge badge-free">FREE</span>
+              </div>
+              <h3 th:text="${event.name}">Event Name</h3>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta">
+                <div class="event-meta-item"><span class="mi">📍</span><span th:text="${event.venue}">Venue</span></div>
+                <div class="event-meta-item"><span class="mi">🕐</span><span th:text="${event.time}">Time</span></div>
+                <div class="event-meta-item"><span class="mi">💺</span>
+                  <span th:text="${event.availableSeats} + ' / ' + ${event.totalSeats} + ' seats left'">Seats</span>
+                </div>
+              </div>
+              <div class="seat-bar">
+                <div class="seat-bar-fill" th:style="'width:' + ${event.availableSeats * 100 / event.totalSeats} + '%'"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+                <div>
+                  <span th:if="${event.registrationFee == 0}" class="event-fee event-fee-free">FREE</span>
+                  <span th:unless="${event.registrationFee == 0}" class="event-fee">
+                    ₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span>
+                  </span>
+                </div>
+                <a th:href="@{/student/events/{id}/register(id=${event.id})}" class="btn btn-primary btn-sm">Register</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Registrations -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📋 Recent Registrations</span>
+        <a href="/student/registrations" class="btn btn-outline btn-sm">View All</a>
+      </div>
+      <div class="card-body">
+        <div th:if="${myRegistrations.empty}" class="empty-state">
+          <div class="e-icon">📝</div>
+          <p>You haven't registered for any events yet.</p>
+        </div>
+        <div class="table-wrap" th:unless="${myRegistrations.empty}">
+          <table>
+            <thead>
+              <tr>
+                <th>Reg ID</th><th>Event</th><th>Venue</th><th>Amount</th><th>Feedback</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="reg, iStat : ${myRegistrations}" th:if="${iStat.index < 5}">
+                <td><span style="font-family:'Courier New', monospace; font-weight: 600;" th:text="${reg.registrationId}">REG001</span></td>
+                <td class="fw-bold" th:text="${reg.event.name}">Event</td>
+                <td class="text-muted" th:text="${reg.event.venue}">Venue</td>
+                <td>
+                  <span th:if="${reg.amountPaid == 0}" class="text-green fw-bold">FREE</span>
+                  <span th:unless="${reg.amountPaid == 0}" class="fw-bold">
+                    ₹<span th:text="${#numbers.formatDecimal(reg.amountPaid,1,0)}">0</span>
+                  </span>
+                </td>
+                <td>
+                  <span th:if="${reg.feedback != null}" class="badge badge-approved">Given ⭐<span th:text="${reg.rating}">5</span></span>
+                  <span th:unless="${reg.feedback != null}" class="badge badge-pending">Pending</span>
+                </td>
+                <td>
+                  <span th:unless="${reg.feedback != null}">
+                    <button class="btn btn-outline btn-sm" onclick="openFeedback(this)"
+                            th:attr="data-event-id=${reg.event.id},data-event-name=${reg.event.name}">
+                      ✍️ Feedback
+                    </button>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedbackModal" class="modal-backdrop">
+  <div class="modal-content">
+    <h3 style="margin-bottom:12px; font-family:'Sora',sans-serif;">✍️ Submit Feedback</h3>
+    <p id="feedbackEventName" style="color:var(--text-secondary); font-size:.85rem; margin-bottom:20px;"></p>
+    <form method="post" action="/student/feedback">
+      <input type="hidden" name="eventId" id="feedbackEventId"/>
+      <div class="form-group">
+        <label class="form-label">Rating (1-5 stars)</label>
+        <div style="display:flex; gap:8px; margin-bottom:4px;" id="starRating" class="star-rating">
+          <input type="hidden" name="rating" id="ratingInput" value="5"/>
+          <span th:each="i : ${#numbers.sequence(1,5)}" onclick="setRating(this)" data-val="1">⭐</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Comments</label>
+        <textarea name="comments" class="form-control" rows="4" placeholder="Share your experience..." required style="resize:vertical;"></textarea>
+      </div>
+      <div style="display:flex; gap:10px; margin-top:16px;">
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" class="btn btn-outline" onclick="closeFeedback()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+let selectedRating = 5;
+function openFeedback(btn) {
+  document.getElementById('feedbackEventId').value = btn.dataset.eventId;
+  document.getElementById('feedbackEventName').textContent = 'Event: ' + btn.dataset.eventName;
+  document.getElementById('feedbackModal').style.display = 'flex';
+  updateStars(5);
+}
+function closeFeedback() {
+  document.getElementById('feedbackModal').style.display = 'none';
+}
+function setRating(el) {
+  selectedRating = parseInt(el.dataset.val);
+  updateStars(selectedRating);
+}
+function updateStars(n) {
+  document.getElementById('ratingInput').value = n;
+  const stars = document.querySelectorAll('#starRating span');
+  stars.forEach((s, i) => {
+    s.style.opacity = i < n ? '1' : '0.25';
+    s.dataset.val = i + 1;
+  });
+}
+document.querySelectorAll('#starRating span').forEach((s, i) => {
+  s.dataset.val = i + 1;
+  s.addEventListener('click', () => updateStars(i + 1));
+});
+updateStars(5);
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Registration Receipt — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="auth-wrapper">
+  <div style="width:100%; max-width:520px; margin:20px auto;">
+
+    <div th:if="${receipt != null}">
+      <div class="receipt-card">
+        <div class="check">🎉</div>
+        <h2>Registration Successful!</h2>
+
+        <div class="receipt-row">
+          <span class="r-label">Registration ID</span>
+          <span class="r-value" style="font-family:'Courier New', monospace;" th:text="${receipt.registrationId}">REG001</span>
+        </div>
+        <div class="receipt-row">
+          <span class="r-label">Payment ID</span>
+          <span class="r-value" style="font-family:'Courier New', monospace;" th:text="${receipt.paymentId}">PAY001</span>
+        </div>
+        <div class="receipt-row">
+          <span class="r-label">Transaction ID</span>
+          <span class="r-value" style="font-family:'Courier New', monospace; font-size:.78rem;" th:text="${receipt.transactionId}">TXN</span>
+        </div>
+        <div class="receipt-row">
+          <span class="r-label">Event</span>
+          <span class="r-value" th:text="${receipt.eventName}">Event</span>
+        </div>
+        <div class="receipt-row">
+          <span class="r-label">Venue</span>
+          <span class="r-value" th:text="${receipt.venue}">Venue</span>
+        </div>
+        <div class="receipt-row">
+          <span class="r-label">Time</span>
+          <span class="r-value" th:text="${receipt.time}">Time</span>
+        </div>
+        <div class="receipt-row">
+          <span class="r-label">Amount Paid</span>
+          <span class="r-value text-green" style="font-size:1.15rem; color: var(--success); font-weight: 700;">₹<span th:text="${receipt.amount}">0</span></span>
+        </div>
+
+        <div style="margin-top:24px; text-align:center; font-size:.82rem; color:var(--text-secondary);">
+          A registration confirmation notification is available on your dashboard.
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; justify-content:center; margin-top:24px;">
+        <a href="/student/registrations" class="btn btn-primary">📋 My Registrations</a>
+        <a href="/student/events" class="btn btn-outline">← Browse Events</a>
+      </div>
+    </div>
+
+    <div th:unless="${receipt != null}" style="text-align:center; padding:40px;">
+      <p style="color:var(--text-secondary);">No receipt found. <a href="/student/events">Browse events</a></p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

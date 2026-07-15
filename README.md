@@ -1,53 +1,138 @@
-# Spring Boot Event Management System
+# 🎓 Event Management System — Spring Boot
 
-A simple, beginner-friendly Event Management System built with Spring Boot 3, Thymeleaf, SQLite, and Spring Security.
+A full-stack college Event Management System with three dashboards: **Student**, **Faculty**, and **Admin**.
 
-## 🧰 Technology Stack
-- **Java 17**
-- **Spring Boot 3.3.0**
-- **Maven**
-- **Spring Security** (Session-based, BCrypt encryption)
-- **Spring Data JPA**
-- **SQLite**
-- **Thymeleaf**
-- **Bootstrap 5** (Sky Blue professional UI theme)
+---
 
-## 📁 Project Features
-- **User Authentication**: Secure Sign Up and Log In.
-- **Event Management**: Create, view, edit, and delete events.
-- **Security Validation**:
-  - Future Date validation for events.
-  - Required field validations on all form submissions.
-  - Ownership protection: Users can only see, modify, or delete their own events.
-
-## 🚀 How to Run the Project
+## 🚀 Quick Start
 
 ### Prerequisites
-Make sure you have the following installed:
-- **Java JDK 17**
-- **Maven 3.x**
+- Java 17+
+- Maven 3.8+
+- VS Code with "Extension Pack for Java" or IntelliJ IDEA
 
-### Run Commands
-Navigate to the project root directory in your terminal and execute:
+### Run the Application
 
 ```bash
-# Clean and build the application
-mvn clean install
+# Clone / unzip the project, then:
+cd EventManagementSystem
 
-# Launch the Spring Boot server
+# Build & run
 mvn spring-boot:run
 ```
 
-Once started, the application will be hosted locally at:
-👉 **[http://localhost:8080/](http://localhost:8080/)**
+Open your browser at: **http://localhost:8080**
 
-## 🗄️ Database Configurations
-The project uses SQLite for storage. 
-A file database named `eventapp.db` will be auto-generated in the project root directory during the first run.
-- **Users table**: Stores User ID, Full Name, Email, and encrypted Passwords.
-- **Events table**: Stores Event details linked to the user owner.
+---
 
-## 🎨 UI Colors
-- **Primary Highlights / Brand**: `#87CEEB` (Sky Blue)
-- **Background Theme**: `#E0F7FF` (Soft Pale Blue)
-- **Content Cards**: White elements with subtle shadows and rounded borders (`14px`).
+## 🔐 Demo Credentials
+
+| Role    | Email / Login             | Password    |
+|---------|---------------------------|-------------|
+| Student | alice@student.edu         | student123  |
+| Student | bob@student.edu           | student123  |
+| Faculty | sharma@college.edu        | faculty123  |
+| Faculty | patel@college.edu         | faculty123  |
+| Admin   | (password only)           | admin123    |
+
+---
+
+## 📁 Project Structure
+
+```
+EventManagementSystem/
+├── src/main/java/com/eventmanagement/
+│   ├── EventManagementApplication.java   ← Main entry point
+│   ├── controller/
+│   │   ├── HomeController.java
+│   │   ├── StudentController.java
+│   │   ├── FacultyController.java
+│   │   └── AdminController.java
+│   ├── model/
+│   │   ├── Student.java
+│   │   ├── Faculty.java
+│   │   ├── Event.java
+│   │   ├── Registration.java
+│   │   └── Payment.java
+│   ├── repository/
+│   │   ├── StudentRepository.java
+│   │   ├── FacultyRepository.java
+│   │   ├── EventRepository.java
+│   │   ├── RegistrationRepository.java
+│   │   └── PaymentRepository.java
+│   └── service/
+│       └── EventService.java
+├── src/main/resources/
+│   ├── application.properties
+│   ├── static/css/main.css
+│   └── templates/
+│       ├── index.html                    ← Home page
+│       ├── student/                      ← Student pages
+│       ├── faculty/                      ← Faculty pages
+│       └── admin/                        ← Admin pages
+└── pom.xml
+```
+
+---
+
+## ✨ Features
+
+### 🎓 Student Dashboard
+- Register / Login
+- Browse approved events with real-time seat availability
+- Register for events with payment (Credit Card, Debit Card, UPI, Net Banking, Cash)
+- View registration receipt with Transaction ID
+- Submit star ratings + feedback for attended events
+- View payment history with all transactions
+
+### 👨‍🏫 Faculty Dashboard
+- Register / Login
+- Create events with venue, time, fee, and description
+- Automatic venue conflict detection
+- View registered students per event
+- Earnings report with event-wise revenue breakdown
+
+### 🛡️ Admin Dashboard
+- Secure password-only login
+- Approve or reject pending events
+- View all events, registrations and feedback
+- Complete financial summary with revenue analytics
+
+---
+
+## 🗄️ Database
+
+Uses **H2 in-memory database** (auto-configured). Data resets on restart.
+
+- H2 Console: http://localhost:8080/h2-console
+- JDBC URL: `jdbc:h2:mem:eventdb`
+- Username: `sa` / Password: (empty)
+
+To use **MySQL** instead, update `application.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/eventdb
+spring.datasource.username=root
+spring.datasource.password=yourpassword
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.hibernate.ddl-auto=update
+```
+
+And add MySQL dependency to `pom.xml`:
+```xml
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+---
+
+## 🛠️ VS Code Setup
+
+1. Install **Extension Pack for Java** (Microsoft)
+2. Open the `EventManagementSystem` folder in VS Code
+3. VS Code will auto-detect the Maven project
+4. Press **F5** or run `mvn spring-boot:run` in the terminal

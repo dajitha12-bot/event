@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside th:replace="~{fragments/sidebar :: facultySidebar('dashboard')}"></aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Admin <span>Dashboard</span></div>
+        <div class="text-muted" style="font-size:.82rem; margin-top:2px;">Hello, Dr. <span th:text="${facultyName}">Faculty</span> &nbsp;|&nbsp; <span th:text="${facultyDept} + ' Department'">Dept</span></div>
+      </div>
+      <div class="topbar-actions">
+        <a href="/faculty/events/create" class="btn btn-primary">➕ Create Event</a>
+      </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">✓ <span th:text="${success}"></span></div>
+    <div th:if="${error}" class="alert alert-error">⚠️ <span th:text="${error}"></span></div>
+
+    <!-- Stats -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue">📅</div>
+        <div class="stat-value" th:text="${stats.totalEvents}">0</div>
+        <div class="stat-label">Total Events</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-value" th:text="${stats.approvedEvents}">0</div>
+        <div class="stat-label">Approved Events</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">⏳</div>
+        <div class="stat-value" th:text="${stats.pendingEvents}">0</div>
+        <div class="stat-label">Pending Approval</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">👥</div>
+        <div class="stat-value" th:text="${stats.totalRegistrations}">0</div>
+        <div class="stat-label">Total Students</div>
+      </div>
+      <div class="stat-card" style="grid-column: span 2;">
+        <div class="stat-icon blue">💰</div>
+        <div class="stat-value">₹<span th:text="${#numbers.formatDecimal(stats.totalRevenue,1,0)}">0</span></div>
+        <div class="stat-label">Total Revenue Generated</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">⭐</div>
+        <div class="stat-value" th:text="${stats.avgRating}">N/A</div>
+        <div class="stat-label">Average Rating</div>
+      </div>
+    </div>
+
+    <!-- Recent Events created by Organizer -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📅 My Event Submissions</span>
+        <a href="/faculty/events/create" class="btn btn-primary btn-sm">New Event</a>
+      </div>
+      <div class="card-body">
+        <div th:if="${myEvents.empty}" class="empty-state">
+          <div class="e-icon">📭</div>
+          <p>No events created yet. <a href="/faculty/events/create">Create your first event!</a></p>
+        </div>
+        <div class="table-wrap" th:unless="${myEvents.empty}">
+          <table>
+            <thead>
+              <tr><th>Event</th><th>Venue</th><th>Time</th><th>Fee</th><th>Seats Available</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="event : ${myEvents}">
+                <td class="fw-bold" th:text="${event.name}">Event</td>
+                <td class="text-muted" th:text="${event.venue}">Venue</td>
+                <td class="text-muted" style="font-size:.8rem;" th:text="${event.time}">Time</td>
+                <td>
+                  <span th:if="${event.registrationFee == 0}" class="text-green fw-bold" style="color: var(--success);">FREE</span>
+                  <span th:unless="${event.registrationFee == 0}">₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span></span>
+                </td>
+                <td th:text="${event.availableSeats} + '/' + ${event.totalSeats}">50/100</td>
+                <td>
+                  <span th:switch="${event.status}">
+                    <span th:case="'APPROVED'" class="badge badge-approved">Approved</span>
+                    <span th:case="'PENDING'" class="badge badge-pending">Pending</span>
+                    <span th:case="'REJECTED'" class="badge badge-rejected">Rejected</span>
+                  </span>
+                </td>
+                <td>
+                  <a th:href="@{/faculty/events/{id}/students(id=${event.id})}" class="btn btn-outline btn-sm">👥 Students</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

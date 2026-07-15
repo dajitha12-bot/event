@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🛡️</div>
+      <h2>EMS Admin</h2>
+      <p>System Administrator</p>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Administration</div>
+        <a href="/admin/dashboard" class="nav-link active"><span class="icon">🏠</span> Dashboard</a>
+        <a href="/admin/events/pending" class="nav-link"><span class="icon">⏳</span> Pending Approvals
+          <span th:if="${stats.pendingEvents > 0}" class="badge badge-pending" style="margin-left:auto;" th:text="${stats.pendingEvents}">0</span>
+        </a>
+        <a href="/admin/events" class="nav-link"><span class="icon">📅</span> All Events</a>
+        <a href="/admin/registrations" class="nav-link"><span class="icon">📋</span> Registrations</a>
+        <a href="/admin/financials" class="nav-link"><span class="icon">💰</span> Financials</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/logout" class="nav-link" style="color:var(--red)"><span class="icon">🚪</span> Logout</a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Admin <span>Dashboard</span></div>
+        <div class="text-muted" style="font-size:.82rem;margin-top:2px;">System overview & management</div>
+      </div>
+      <div class="topbar-user">
+        <div class="avatar">🛡️</div>
+        <span>Administrator</span>
+      </div>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">✓ <span th:text="${success}"></span></div>
+    <div th:if="${error}" class="alert alert-error">⚠️ <span th:text="${error}"></span></div>
+
+    <!-- Stats Grid -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon purple">📅</div>
+        <div class="stat-value" th:text="${stats.totalEvents}">0</div>
+        <div class="stat-label">Total Events</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-value" th:text="${stats.approvedEvents}">0</div>
+        <div class="stat-label">Approved Events</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">⏳</div>
+        <div class="stat-value" th:text="${stats.pendingEvents}">0</div>
+        <div class="stat-label">Pending Approval</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">🎓</div>
+        <div class="stat-value" th:text="${stats.totalStudents}">0</div>
+        <div class="stat-label">Total Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon purple">👨‍🏫</div>
+        <div class="stat-value" th:text="${stats.totalFaculties}">0</div>
+        <div class="stat-label">Total Faculty</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon amber">📋</div>
+        <div class="stat-value" th:text="${stats.totalRegistrations}">0</div>
+        <div class="stat-label">Registrations</div>
+      </div>
+      <div class="stat-card" style="grid-column:span 2;">
+        <div class="stat-icon green">💰</div>
+        <div class="stat-value">₹<span th:text="${#numbers.formatDecimal(stats.totalRevenue,1,0)}">0</span></div>
+        <div class="stat-label">Total Revenue Collected</div>
+      </div>
+    </div>
+
+    <!-- Pending Approvals -->
+    <div class="card" th:if="${!pendingEvents.empty}">
+      <div class="card-header">
+        <span class="card-title">⏳ Pending Event Approvals</span>
+        <a href="/admin/events/pending" class="btn btn-primary btn-sm">View All</a>
+      </div>
+      <div class="card-body">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Event Name</th><th>Faculty</th><th>Venue</th><th>Time</th><th>Fee</th><th>Seats</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="event, iStat : ${pendingEvents}" th:if="${iStat.index < 5}">
+                <td class="fw-bold" th:text="${event.name}">Event</td>
+                <td class="text-muted">Dr. <span th:text="${event.faculty.name}">Faculty</span></td>
+                <td th:text="${event.venue}">Venue</td>
+                <td class="text-muted" style="font-size:.8rem;" th:text="${event.time}">Time</td>
+                <td>
+                  <span th:if="${event.registrationFee == 0}" class="text-green fw-bold">FREE</span>
+                  <span th:unless="${event.registrationFee == 0}">₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span></span>
+                </td>
+                <td th:text="${event.totalSeats}">100</td>
+                <td>
+                  <div style="display:flex;gap:6px;">
+                    <form th:action="@{/admin/events/{id}/approve(id=${event.id})}" method="post" style="margin:0;">
+                      <button type="submit" class="btn btn-success btn-sm">✓ Approve</button>
+                    </form>
+                    <form th:action="@{/admin/events/{id}/reject(id=${event.id})}" method="post" style="margin:0;">
+                      <button type="submit" class="btn btn-danger btn-sm">✗ Reject</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Events preview -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">📅 Recent Events</span>
+        <a href="/admin/events" class="btn btn-outline btn-sm">View All</a>
+      </div>
+      <div class="card-body">
+        <div th:if="${allEvents.empty}" class="empty-state">
+          <div class="e-icon">📭</div><p>No events in the system yet.</p>
+        </div>
+        <div class="table-wrap" th:unless="${allEvents.empty}">
+          <table>
+            <thead>
+              <tr><th>Event</th><th>Faculty</th><th>Venue</th><th>Status</th><th>Seats Used</th><th>Revenue</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="event, iStat : ${allEvents}" th:if="${iStat.index < 8}">
+                <td class="fw-bold" th:text="${event.name}">Event</td>
+                <td class="text-muted">Dr. <span th:text="${event.faculty.name}">Faculty</span></td>
+                <td th:text="${event.venue}">Venue</td>
+                <td>
+                  <span th:switch="${event.status}">
+                    <span th:case="'APPROVED'" class="badge badge-approved">Approved</span>
+                    <span th:case="'PENDING'" class="badge badge-pending">Pending</span>
+                    <span th:case="'REJECTED'" class="badge badge-rejected">Rejected</span>
+                  </span>
+                </td>
+                <td th:text="${event.bookedSeats} + ' / ' + ${event.totalSeats}">0/100</td>
+                <td class="text-green fw-bold">₹<span th:text="${#numbers.formatDecimal(event.totalRevenue,1,0)}">0</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

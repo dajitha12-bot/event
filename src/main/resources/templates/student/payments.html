@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Payment History — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<div class="layout">
+  <!-- Sidebar -->
+  <aside th:replace="~{fragments/sidebar :: studentSidebar('payments')}"></aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="topbar">
+      <div>
+        <div class="page-title">Payment <span>History</span></div>
+        <div class="text-muted" style="font-size:.82rem; margin-top:2px;">Track transaction details and payment receipts</div>
+      </div>
+      <div class="topbar-user">
+        <div class="avatar" th:text="${#strings.substring(studentName,0,1)}">S</div>
+        <span th:text="${studentName}">Student</span>
+      </div>
+    </div>
+
+    <div th:if="${payments.empty}" class="empty-state" style="padding:80px 20px;">
+      <div class="e-icon">💳</div>
+      <p>No payment records found.</p>
+    </div>
+
+    <div th:unless="${payments.empty}">
+      <!-- Summary -->
+      <div class="stat-grid" style="max-width: 720px;">
+        <div class="stat-card">
+          <div class="stat-icon green">💳</div>
+          <div class="stat-value" th:text="${payments.size()}">0</div>
+          <div class="stat-label">Total Transactions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon blue">💰</div>
+          <div class="stat-value">
+            ₹<span th:text="${#numbers.formatDecimal(payments.stream().mapToDouble(p -> p.amount).sum(),1,0)}">0</span>
+          </div>
+          <div class="stat-label">Total Amount Spent</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">✅</div>
+          <div class="stat-value" th:text="${payments.size()}">0</div>
+          <div class="stat-label">Cleared Payments</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">💳 Transaction Logs</span></div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Payment ID</th><th>Transaction ID</th><th>Event</th><th>Amount</th><th>Method</th><th>Date</th><th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="pay : ${payments}">
+                  <td><span style="font-family:'Courier New', monospace; font-weight: 600;" th:text="${pay.paymentId}">PAY001</span></td>
+                  <td><span style="font-family:'Courier New', monospace; font-size:.78rem;" th:text="${pay.transactionId}">TXN</span></td>
+                  <td class="fw-bold" th:text="${pay.event.name}">Event</td>
+                  <td class="fw-bold text-accent">₹<span th:text="${#numbers.formatDecimal(pay.amount,1,0)}">0</span></td>
+                  <td th:text="${pay.paymentMethod}">UPI</td>
+                  <td class="text-muted" style="font-size:.8rem;"
+                      th:text="${#temporals.format(pay.paymentDate,'dd MMM yyyy HH:mm')}">Date</td>
+                  <td><span class="badge badge-approved" th:text="${pay.status}">SUCCESS</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

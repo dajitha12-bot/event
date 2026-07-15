@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>All Events — EMS Admin</title>
+<link rel="stylesheet" href="/css/main.css"/>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🛡️</div><h2>EMS Admin</h2><p>System Administrator</p></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Administration</div>
+        <a href="/admin/dashboard" class="nav-link"><span class="icon">🏠</span> Dashboard</a>
+        <a href="/admin/events/pending" class="nav-link"><span class="icon">⏳</span> Pending Approvals</a>
+        <a href="/admin/events" class="nav-link active"><span class="icon">📅</span> All Events</a>
+        <a href="/admin/registrations" class="nav-link"><span class="icon">📋</span> Registrations</a>
+        <a href="/admin/financials" class="nav-link"><span class="icon">💰</span> Financials</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer"><a href="/logout" class="nav-link" style="color:var(--red)"><span class="icon">🚪</span> Logout</a></div>
+  </aside>
+  <main class="main-content">
+    <div class="topbar">
+      <div class="page-title">All <span>Events</span></div>
+      <div class="text-muted" style="font-size:.85rem;" th:text="${events.size()} + ' total events'">0 events</div>
+    </div>
+
+    <div th:if="${events.empty}" class="empty-state" style="padding:80px 20px;">
+      <div class="e-icon">📭</div><p>No events in the system yet.</p>
+    </div>
+
+    <div class="card" th:unless="${events.empty}">
+      <div class="card-body" style="padding:0;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Event Name</th><th>Faculty</th><th>Venue</th><th>Time</th><th>Fee</th><th>Seats</th><th>Status</th><th>Revenue</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr th:each="event : ${events}">
+                <td class="mono text-muted" th:text="${event.id}">1</td>
+                <td class="fw-bold" th:text="${event.name}">Event</td>
+                <td class="text-muted">Dr. <span th:text="${event.faculty.name}">Faculty</span></td>
+                <td th:text="${event.venue}">Venue</td>
+                <td class="text-muted" style="font-size:.78rem;" th:text="${event.time}">Time</td>
+                <td>
+                  <span th:if="${event.registrationFee == 0}" class="text-green fw-bold">FREE</span>
+                  <span th:unless="${event.registrationFee == 0}">₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span></span>
+                </td>
+                <td th:text="${event.bookedSeats} + '/' + ${event.totalSeats}">0/100</td>
+                <td>
+                  <span th:switch="${event.status}">
+                    <span th:case="'APPROVED'" class="badge badge-approved">Approved</span>
+                    <span th:case="'PENDING'" class="badge badge-pending">Pending</span>
+                    <span th:case="'REJECTED'" class="badge badge-rejected">Rejected</span>
+                  </span>
+                </td>
+                <td class="text-green fw-bold">₹<span th:text="${#numbers.formatDecimal(event.totalRevenue,1,0)}">0</span></td>
+                <td>
+                  <div th:if="${event.status == 'PENDING'}" style="display:flex;gap:4px;">
+                    <form th:action="@{/admin/events/{id}/approve(id=${event.id})}" method="post" style="margin:0;">
+                      <button type="submit" class="btn btn-success btn-sm">✓</button>
+                    </form>
+                    <form th:action="@{/admin/events/{id}/reject(id=${event.id})}" method="post" style="margin:0;">
+                      <button type="submit" class="btn btn-danger btn-sm">✗</button>
+                    </form>
+                  </div>
+                  <span th:unless="${event.status == 'PENDING'}" class="text-muted" style="font-size:.78rem;">—</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

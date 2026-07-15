@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pending Approvals — EMS</title>
+<link rel="stylesheet" href="/css/main.css"/>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🛡️</div><h2>EMS Admin</h2><p>System Administrator</p></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <div class="nav-section-title">Administration</div>
+        <a href="/admin/dashboard" class="nav-link"><span class="icon">🏠</span> Dashboard</a>
+        <a href="/admin/events/pending" class="nav-link active"><span class="icon">⏳</span> Pending Approvals</a>
+        <a href="/admin/events" class="nav-link"><span class="icon">📅</span> All Events</a>
+        <a href="/admin/registrations" class="nav-link"><span class="icon">📋</span> Registrations</a>
+        <a href="/admin/financials" class="nav-link"><span class="icon">💰</span> Financials</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer"><a href="/logout" class="nav-link" style="color:var(--red)"><span class="icon">🚪</span> Logout</a></div>
+  </aside>
+  <main class="main-content">
+    <div class="topbar">
+      <div class="page-title">Pending <span>Approvals</span></div>
+      <a href="/admin/dashboard" class="btn btn-outline">← Dashboard</a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">✓ <span th:text="${success}"></span></div>
+    <div th:if="${error}" class="alert alert-error">⚠️ <span th:text="${error}"></span></div>
+
+    <div th:if="${pendingEvents.empty}" class="empty-state" style="padding:80px 20px;">
+      <div class="e-icon">✅</div>
+      <p>All caught up! No pending event approvals.</p>
+    </div>
+
+    <div th:unless="${pendingEvents.empty}">
+      <div class="alert alert-info" style="margin-bottom:20px;">
+        📋 <strong th:text="${pendingEvents.size()}">0</strong> event(s) waiting for your approval.
+      </div>
+      <div th:each="event : ${pendingEvents}" class="card" style="margin-bottom:18px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title" th:text="${event.name}">Event</div>
+            <div class="text-muted" style="font-size:.75rem;margin-top:2px;">
+              Requested by Dr. <span th:text="${event.faculty.name}">Faculty</span>
+              (<span th:text="${event.faculty.department}">Dept</span>)
+            </div>
+          </div>
+          <span class="badge badge-pending">⏳ Pending</span>
+        </div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:20px;">
+            <div><div class="text-muted" style="font-size:.72rem;">VENUE</div><div class="fw-bold" th:text="${event.venue}">Venue</div></div>
+            <div><div class="text-muted" style="font-size:.72rem;">TIME</div><div class="fw-bold" th:text="${event.time}">Time</div></div>
+            <div><div class="text-muted" style="font-size:.72rem;">TOTAL SEATS</div><div class="fw-bold" th:text="${event.totalSeats}">100</div></div>
+            <div><div class="text-muted" style="font-size:.72rem;">REGISTRATION FEE</div>
+              <div class="fw-bold">
+                <span th:if="${event.registrationFee == 0}" class="text-green">FREE</span>
+                <span th:unless="${event.registrationFee == 0}" class="text-accent">₹<span th:text="${#numbers.formatDecimal(event.registrationFee,1,0)}">0</span></span>
+              </div>
+            </div>
+            <div><div class="text-muted" style="font-size:.72rem;">POTENTIAL REVENUE</div>
+              <div class="fw-bold text-green">₹<span th:text="${#numbers.formatDecimal(event.totalSeats * event.registrationFee,1,0)}">0</span></div>
+            </div>
+          </div>
+          <div th:if="${event.description}" style="background:var(--navy2);border-radius:8px;padding:12px;margin-bottom:16px;">
+            <div class="text-muted" style="font-size:.72rem;margin-bottom:4px;">DESCRIPTION</div>
+            <div style="font-size:.85rem;" th:text="${event.description}">Description</div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <form th:action="@{/admin/events/{id}/approve(id=${event.id})}" method="post" style="margin:0;">
+              <button type="submit" class="btn btn-success">✓ Approve Event</button>
+            </form>
+            <form th:action="@{/admin/events/{id}/reject(id=${event.id})}" method="post" style="margin:0;">
+              <button type="submit" class="btn btn-danger">✗ Reject Event</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
